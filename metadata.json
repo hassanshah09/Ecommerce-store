@@ -1,0 +1,6 @@
+{
+  "name": "WhatsApp Ecommerce & Order Platform",
+  "description": "Configurable ecommerce store with automated WhatsApp ordering, product catalog, real-time admin portal, order verification, invoice generation, customer reviews system, automated email notifications, and full database APIs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

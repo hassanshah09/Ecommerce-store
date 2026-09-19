@@ -1,0 +1,60 @@
+{
+  "store": {
+    "name": "Digitaize Solution",
+    "tagline": "Quality Products At Best Prices",
+    "currency": "PKR",
+    "country": "Pakistan",
+    "language": "en"
+  },
+  "branding": {
+    "logo": "/logo/logo.png",
+    "favicon": "/logo/logo.png",
+    "primaryColor": "#0f172a",
+    "secondaryColor": "#0ea5e9"
+  },
+  "contact": {
+    "whatsappNumber": "03125666192",
+    "email": "hassanshah022005@gmail.com",
+    "supportHours": "9:00 AM - 10:00 PM (PKT)"
+  },
+  "announcement": {
+    "enabled": true,
+    "text": "✨ Free delivery on all orders above PKR 4,0000 | Fast WhatsApp Checkout"
+  },
+  "header": {
+    "showSearch": true,
+    "showCategories": true,
+    "showCart": true
+  },
+  "footer": {
+    "enabled": true,
+    "description": "Your trusted, lightning-fast direct WhatsApp ordering store with guaranteed authentic products.",
+    "showSocialLinks": true,
+    "copyright": "© 2026 NovaMart PK. All rights reserved."
+  },
+  "theme": {
+    "default": "light",
+    "allowDarkMode": true,
+    "allowLightMode": true
+  },
+  "checkout": {
+    "allowGuestCheckout": true,
+    "whatsappOrdering": true
+  },
+  "features": {
+    "whatsappOrders": true,
+    "darkMode": false,
+    "guestCheckout": true,
+    "invoiceGeneration": true,
+    "emailSystem": true
+  },
+  "emailSettings": {
+    "enabled": true,
+    "senderName": "NovaMart PK Support",
+    "senderEmail": "orders@novamart.pk",
+    "sendOrderConfirmation": true,
+    "sendReviewConfirmation": true,
+    "sendInvoiceOnRequest": true,
+    "adminAlertEmail": "admin@ecommercesite.com"
+  }
+}

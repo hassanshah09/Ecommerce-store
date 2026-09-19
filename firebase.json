@@ -1,0 +1,38 @@
+{
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    }
+  },
+  "hosting": [
+    {
+      "site": "digitaizesoultion",
+      "public": "dist/customer",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        { "source": "/api/**", "function": "api" },
+        { "source": "**", "destination": "/index.html" }
+      ]
+    },
+    {
+      "site": "ecommercesite-admin-af89c",
+      "public": "dist/admin",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        { "source": "/api/**", "function": "api" },
+        { "source": "**", "destination": "/index.html" }
+      ]
+    }
+  ]
+}
