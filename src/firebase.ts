@@ -7,13 +7,13 @@ import { getAuth, Auth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
-  apiKey: "AIzaSyCyQjUsc2Wwnz70w3g-GXLPcEX2uMUA_Ow",
-  authDomain: "ecommercesite-af89c.firebaseapp.com",
-  projectId: "ecommercesite-af89c",
-  storageBucket: "ecommercesite-af89c.firebasestorage.app",
-  messagingSenderId: "500671597622",
-  appId: "1:500671597622:web:5c112f77a26ea887489c97",
-  measurementId: "G-6X9K94M2HK",
+  apiKey: "AIzaSyDfxfReGcxr9pjQ3LHGnH1r7iKL2xE4MMc",
+  authDomain: "ecomerce-c938e.firebaseapp.com",
+  projectId: "ecomerce-c938e",
+  storageBucket: "ecomerce-c938e.firebasestorage.app",
+  messagingSenderId: "806577884848",
+  appId: "1:806577884848:web:ed713979d39a28fd80f575",
+  measurementId: "G-MF7RLPGZ5T",
 };
 
 // Initialize Firebase App
@@ -32,7 +32,7 @@ if (typeof window !== "undefined") {
       if (supported) {
         try {
           analyticsInstance = getAnalytics(app);
-          console.log("[Firebase] Initialized for project: ecommercesite-af89c");
+          console.log("[Firebase] Initialized for project: ecomerce-c938e");
         } catch (err) {
           console.warn("[Firebase Analytics] Initialization notice:", err);
         }

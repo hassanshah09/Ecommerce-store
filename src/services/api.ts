@@ -8,8 +8,46 @@ import type {
   Review,
   EmailLog,
 } from '../types';
+import { doc, getDoc, onSnapshot, setDoc, type Unsubscribe } from 'firebase/firestore';
+import { auth, firestore } from '../firebase';
 
 const API_BASE = '/api';
+const STORE_CONFIG_REF = doc(firestore, 'settings', 'storeConfig');
+
+function isHostedBuild(): boolean {
+  return typeof window !== 'undefined' && window.location.hostname.endsWith('.web.app');
+}
+
+function removeUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.filter((item) => item !== undefined).map(removeUndefined) as T;
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .filter(([, item]) => item !== undefined)
+        .map(([key, item]) => [key, removeUndefined(item)]),
+    ) as T;
+  }
+  return value;
+}
+
+function mergeStoreConfig(current: StoreConfig, changes: Partial<StoreConfig>): StoreConfig {
+  return {
+    ...current,
+    ...changes,
+    store: { ...current.store, ...(changes.store || {}) },
+    branding: { ...current.branding, ...(changes.branding || {}) },
+    contact: { ...current.contact, ...(changes.contact || {}) },
+    announcement: { ...current.announcement, ...(changes.announcement || {}) },
+    header: { ...current.header, ...(changes.header || {}) },
+    footer: { ...current.footer, ...(changes.footer || {}) },
+    theme: { ...current.theme, ...(changes.theme || {}) },
+    checkout: { ...current.checkout, ...(changes.checkout || {}) },
+    features: { ...current.features, ...(changes.features || {}) },
+    emailSettings: changes.emailSettings || current.emailSettings,
+  };
+}
 
 async function parseJsonResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -95,6 +133,15 @@ export function buildWhatsAppOrderLink(
 }
 
 export async function fetchStoreConfig(): Promise<StoreConfig> {
+  if (isHostedBuild()) {
+    try {
+      const snapshot = await getDoc(STORE_CONFIG_REF);
+      if (snapshot.exists()) return snapshot.data() as StoreConfig;
+    } catch {
+      // Fall back to the API or local defaults when Firestore is unavailable.
+    }
+  }
+
   try {
     const res = await fetch(`${API_BASE}/config`);
     if (!res.ok) throw new Error('Config fetch failed');
@@ -156,16 +203,50 @@ export async function fetchStoreConfig(): Promise<StoreConfig> {
 }
 
 export async function updateStoreConfig(config: Partial<StoreConfig>, adminUser?: string): Promise<StoreConfig> {
+  const currentUser = auth.currentUser;
+  const actor = adminUser || currentUser?.email || 'admin@digitaizesolution.com';
+  if (config.store?.name !== undefined && !config.store.name.trim()) {
+    throw new Error('Store name cannot be empty.');
+  }
+  if (config.contact?.whatsappNumber !== undefined && config.contact.whatsappNumber.replace(/\D/g, '').length < 10) {
+    throw new Error('Enter a valid WhatsApp number with at least 10 digits.');
+  }
+
+  if (isHostedBuild()) {
+    const snapshot = await getDoc(STORE_CONFIG_REF);
+    const current = snapshot.exists() ? (snapshot.data() as StoreConfig) : await fetchStoreConfig();
+    const updated = {
+      ...mergeStoreConfig(current, config),
+      updatedAt: new Date().toISOString(),
+      updatedBy: actor,
+    };
+    try {
+      await setDoc(STORE_CONFIG_REF, removeUndefined(updated), { merge: true });
+    } catch (error: any) {
+      throw new Error(error?.code === 'permission-denied'
+        ? 'Firebase rejected this save. Sign in again with the approved admin account.'
+        : error?.message || 'Firebase could not save the store configuration.');
+    }
+    return updated as StoreConfig;
+  }
+
   const res = await fetch(`${API_BASE}/config`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'x-admin-user': adminUser || 'admin@ecommercesite.com',
+      'x-admin-user': actor,
     },
     body: JSON.stringify(config),
   });
   if (!res.ok) throw new Error('Failed to update config');
   return res.json();
+}
+
+export function subscribeStoreConfig(onConfig: (config: StoreConfig) => void): Unsubscribe | null {
+  if (!isHostedBuild()) return null;
+  return onSnapshot(STORE_CONFIG_REF, (snapshot) => {
+    if (snapshot.exists()) onConfig(snapshot.data() as StoreConfig);
+  });
 }
 
 export async function fetchCategories(): Promise<Category[]> {

@@ -109,6 +109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [selectedProductImage, setSelectedProductImage] = useState('');
+  const [productImageUrls, setProductImageUrls] = useState<string[]>([]);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [productCategorySelection, setProductCategorySelection] = useState('');
   const [newProductCategory, setNewProductCategory] = useState('');
@@ -121,6 +122,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Form states
   const [brandingForm, setBrandingForm] = useState<StoreConfig>(config);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
+  const [saveErrorMsg, setSaveErrorMsg] = useState<string | null>(null);
+  const [isSavingBranding, setIsSavingBranding] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -161,6 +164,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   useEffect(() => {
     if (!isAddingProduct) return;
     setProductCategorySelection(editingProduct?.categoryName || categories[0]?.displayName || '');
+    setSelectedProductImage(editingProduct?.thumbnail || '');
+    setProductImageUrls(editingProduct?.images?.length ? editingProduct.images : editingProduct?.thumbnail ? [editingProduct.thumbnail] : []);
     setNewProductCategory('');
   }, [isAddingProduct, editingProduct]);
 
@@ -219,6 +224,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleSaveBranding = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveSuccessMsg(null);
+    setSaveErrorMsg(null);
+    setIsSavingBranding(true);
     try {
       const updated = await updateStoreConfig(brandingForm);
       onConfigUpdated(updated);
@@ -226,7 +234,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setTimeout(() => setSaveSuccessMsg(null), 3000);
       loadData();
     } catch (e: any) {
-      alert(e.message || 'Failed to save config');
+      setSaveErrorMsg(e.message || 'Failed to save config');
+    } finally {
+      setIsSavingBranding(false);
     }
   };
 
@@ -723,6 +733,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   onClick={() => {
                     setEditingProduct(null);
                     setSelectedProductImage('');
+                    setProductImageUrls([]);
                     setIsAddingProduct(true);
                   }}
                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 shadow-2xs transition-colors self-start sm:self-auto"
@@ -834,6 +845,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 onClick={() => {
                                   setEditingProduct(p);
                                   setSelectedProductImage(p.thumbnail || '');
+                                  setProductImageUrls(p.images?.length ? p.images : p.thumbnail ? [p.thumbnail] : []);
                                   setIsAddingProduct(true);
                                 }}
                                 className="p-1.5 text-stone-500 hover:text-stone-900 dark:hover:text-white rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800"
@@ -914,6 +926,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs rounded-xl flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
                   <span>{saveSuccessMsg}</span>
+                </div>
+              )}
+
+              {saveErrorMsg && (
+                <div className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center gap-2">
+                  <XCircle className="w-4 h-4" />
+                  <span>{saveErrorMsg}</span>
                 </div>
               )}
 
@@ -1136,9 +1155,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="pt-4 flex justify-end">
                   <button
                     type="submit"
-                    className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-sm transition-colors"
+                    disabled={isSavingBranding}
+                    className="w-full sm:w-auto px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:pointer-events-none text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-2xs"
                   >
-                    Save & Apply Changes
+                    <Check className="w-4 h-4" />
+                    {isSavingBranding ? 'Saving...' : 'Save All Store Configuration'}
                   </button>
                 </div>
               </form>
@@ -1257,7 +1278,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
                     <span className="font-bold text-xs text-stone-900 dark:text-white uppercase tracking-wider">
-                      Connected Firebase Project: ecomercesite-9bfd4
+                      Connected Firebase Project: ecomerce-c938e
                     </span>
                   </div>
                   <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 text-[10px] font-mono font-bold rounded-full">
@@ -1266,25 +1287,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
 
                 <p className="text-xs text-stone-600 dark:text-stone-400">
-                  Firebase web app credentials and Google Analytics 4 tracking (<code className="font-mono text-amber-600 font-bold">G-ZFT8HXB541</code>) are linked and tracking visitor storefront interactions.
+                  Firebase web app credentials and Google Analytics 4 tracking (<code className="font-mono text-amber-600 font-bold">G-MF7RLPGZ5T</code>) are linked and tracking visitor storefront interactions.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl space-y-1">
                     <div className="text-stone-400 text-[10px]">Project ID</div>
-                    <div className="font-mono font-bold text-stone-800 dark:text-stone-200">ecomercesite-9bfd4</div>
+                    <div className="font-mono font-bold text-stone-800 dark:text-stone-200">ecomerce-c938e</div>
                   </div>
                   <div className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl space-y-1">
                     <div className="text-stone-400 text-[10px]">Auth Domain</div>
-                    <div className="font-mono text-stone-700 dark:text-stone-300 truncate">ecomercesite-9bfd4.firebaseapp.com</div>
+                    <div className="font-mono text-stone-700 dark:text-stone-300 truncate">ecomerce-c938e.firebaseapp.com</div>
                   </div>
                   <div className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl space-y-1">
                     <div className="text-stone-400 text-[10px]">Google Analytics Stream</div>
-                    <div className="font-mono text-emerald-600 font-bold">G-ZFT8HXB541 (Active)</div>
+                    <div className="font-mono text-emerald-600 font-bold">G-MF7RLPGZ5T (Active)</div>
                   </div>
                   <div className="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl space-y-1">
                     <div className="text-stone-400 text-[10px]">Storage Bucket</div>
-                    <div className="font-mono text-stone-700 dark:text-stone-300 truncate">ecomercesite-9bfd4.firebasestorage.app</div>
+                    <div className="font-mono text-stone-700 dark:text-stone-300 truncate">ecomerce-c938e.firebasestorage.app</div>
                   </div>
                 </div>
               </div>
@@ -1815,6 +1836,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   sku: form.sku.value,
                   brand: form.brand.value,
                   thumbnail: selectedProductImage || form.thumbnail.value || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80',
+                  images: Array.from(new Set([
+                    selectedProductImage || form.thumbnail.value,
+                    ...productImageUrls,
+                  ].map((url) => String(url || '').trim()).filter(Boolean))),
                   description: form.description.value,
                   status: form.status.value,
                   featured: form.featured.checked,
@@ -1830,7 +1855,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   setIsAddingProduct(false);
                   setEditingProduct(null);
                   setSelectedProductImage('');
-                  loadData();
+                  setProductImageUrls([]);
+                  await loadData();
                 } catch (err: any) {
                   alert(err.message || 'Failed to save product');
                 }
@@ -1854,42 +1880,40 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <select
                     name="categoryName"
                     required
-                      value={productCategorySelection}
-                      onChange={(e) => {
-                        setProductCategorySelection(e.target.value);
-                        if (e.target.value !== '__new__') setNewProductCategory('');
-                      }}
+                    value={productCategorySelection}
+                    onChange={(event) => {
+                      setProductCategorySelection(event.target.value);
+                      if (event.target.value !== '__new__') setNewProductCategory('');
+                    }}
                     className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-800 border rounded-xl"
-                    >
-                      <option value="" disabled>
-                        Select a category
+                  >
+                    <option value="" disabled>Select a category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.displayName}>
+                        {category.displayName} ({category.productCount || 0} products)
                       </option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.displayName}>
-                          {category.displayName} ({category.productCount || 0} products)
-                        </option>
-                      ))}
-                      <option value="__new__">+ Create new category</option>
-                    </select>
-                    {productCategorySelection === '__new__' && (
-                      <div className="mt-2 flex gap-2">
-                        <input
-                          type="text"
-                          value={newProductCategory}
-                          onChange={(e) => setNewProductCategory(e.target.value)}
-                          placeholder="New category name"
-                          className="min-w-0 flex-1 px-3 py-2 bg-stone-50 dark:bg-stone-800 border rounded-xl"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleCreateProductCategory}
-                          disabled={!newProductCategory.trim() || isCreatingProductCategory}
-                          className="shrink-0 px-3 py-2 bg-blue-900 hover:bg-blue-800 disabled:opacity-50 text-white font-semibold rounded-xl"
-                        >
-                          {isCreatingProductCategory ? 'Creating...' : 'Create'}
-                        </button>
-                      </div>
-                    )}
+                    ))}
+                    <option value="__new__">+ Create new category</option>
+                  </select>
+                  {productCategorySelection === '__new__' && (
+                    <div className="mt-2 flex gap-2">
+                      <input
+                        type="text"
+                        value={newProductCategory}
+                        onChange={(event) => setNewProductCategory(event.target.value)}
+                        placeholder="New category name"
+                        className="min-w-0 flex-1 px-3 py-2 bg-stone-50 dark:bg-stone-800 border rounded-xl"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleCreateProductCategory}
+                        disabled={!newProductCategory.trim() || isCreatingProductCategory}
+                        className="shrink-0 px-3 py-2 bg-blue-900 hover:bg-blue-800 disabled:opacity-50 text-white font-semibold rounded-xl"
+                      >
+                        {isCreatingProductCategory ? 'Creating...' : 'Create'}
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block font-semibold mb-1">Brand</label>
@@ -1964,26 +1988,50 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="url"
                   placeholder="https://..."
                   defaultValue={editingProduct?.thumbnail || ''}
+                  onChange={(event) => {
+                    setSelectedProductImage('');
+                    const url = event.target.value.trim();
+                    setProductImageUrls((previous) => url ? [url, ...previous.filter((item) => item !== url)] : previous.slice(1));
+                  }}
+                  className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-800 border rounded-xl font-mono"
+                />
+                <label className="block font-semibold mt-2 mb-1">Additional Image URLs</label>
+                <textarea
+                  value={productImageUrls.filter((url) => url !== selectedProductImage && url !== editingProduct?.thumbnail).join('\n')}
+                  onChange={(event) => {
+                    const urls = event.target.value.split(/[\n,]+/).map((url) => url.trim()).filter(Boolean);
+                    setProductImageUrls((previous) => [previous[0] || '', ...urls]);
+                  }}
+                  placeholder="Paste one image URL per line (optional)"
+                  rows={2}
                   className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-800 border rounded-xl font-mono"
                 />
                 <label className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 font-semibold text-blue-950 hover:bg-blue-100 dark:border-blue-900/60 dark:bg-blue-950/50 dark:text-blue-100 dark:hover:bg-blue-950">
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     className="sr-only"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = () => setSelectedProductImage(String(reader.result));
-                      reader.readAsDataURL(file);
+                    onChange={async (event) => {
+                      const files = Array.from(event.target.files || []);
+                      if (!files.length) return;
+                      const fileImages = await Promise.all(files.map((file) => new Promise<string>((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(String(reader.result));
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                      })));
+                      setSelectedProductImage(fileImages[0]);
+                      setProductImageUrls((previous) => [...fileImages, ...previous.filter((item) => !fileImages.includes(item))]);
                     }}
                   />
-                  <span>Choose a photo from phone</span>
+                  <span>Choose one or more photos from phone</span>
                 </label>
-                {selectedProductImage && (
-                  <img src={selectedProductImage} alt="Selected product preview" className="mt-2 h-20 w-20 rounded-xl object-cover border border-blue-200" />
-                )}
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {productImageUrls.map((image, index) => (
+                    <img key={`${image.slice(0, 32)}-${index}`} src={image} alt={`Product image ${index + 1}`} className="h-20 w-20 rounded-xl object-cover border border-blue-200" />
+                  ))}
+                </div>
               </div>
 
               <div>

@@ -22,14 +22,14 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 export function normalizeCategoryName(name: string): { id: string; displayName: string } {
-  const cleaned = name.trim();
+  const cleaned = name.trim().replace(/\s+/g, ' ');
   const id = cleaned
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '') || 'general';
   
   // Format title case for display
-  const displayName = cleaned
+  const displayName = (cleaned || 'General')
     .split(/\s+/)
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
@@ -378,6 +378,44 @@ const INITIAL_PRODUCTS: Product[] = [
   },
 ];
 
+const INITIAL_DEMO_PRODUCTS: Product[] = [
+  {
+    id: 'sho_8490165', name: 'AeroFlex Knit Everyday Sneakers', categoryId: 'shoes', categoryName: 'Shoes',
+    description: 'Lightweight knit sneakers with a cushioned sole for everyday city walking and travel.', shortDescription: 'Breathable everyday sneakers with a soft cushioned sole.', price: 5499, discountPrice: 4499, brand: 'NovaStride', sku: 'NV-SH-009', stock: 16, lowStockThreshold: 5, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Size', options: ['40 EUR', '41 EUR', '42 EUR', '43 EUR'] }, { name: 'Color', options: ['Cloud White', 'Graphite'] }], tags: ['shoes', 'sneakers', 'casual'], status: 'published', featured: false, newArrival: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'ele_9003186', name: 'StudioCore Bluetooth Desk Speaker', categoryId: 'electronics', categoryName: 'Electronics',
+    description: 'Compact wireless speaker with balanced stereo sound, USB-C charging, and a warm studio finish.', shortDescription: 'Compact Bluetooth speaker for desks, bedrooms, and travel.', price: 6499, discountPrice: 5599, brand: 'AcousticLab', sku: 'NV-EL-010', stock: 12, lowStockThreshold: 4, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1589003077984-894e133dabab?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1589003077984-894e133dabab?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Color', options: ['Sandstone', 'Midnight Black'] }], tags: ['speaker', 'bluetooth', 'audio'], status: 'published', featured: true, newArrival: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'wat_7540129', name: 'Meridian Steel Chronograph', categoryId: 'watches', categoryName: 'Watches',
+    description: 'Polished stainless steel chronograph with a clean black dial and Japanese quartz movement.', shortDescription: 'Refined stainless steel chronograph with a black dial.', price: 8999, discountPrice: 7499, brand: 'Chronos Heritage', sku: 'NV-WT-011', stock: 7, lowStockThreshold: 3, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Strap', options: ['Steel Bracelet', 'Black Leather'] }], tags: ['watch', 'chronograph', 'steel'], status: 'published', featured: true, newArrival: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'acc_8040295', name: 'Canvas Weekender Travel Bag', categoryId: 'accessories', categoryName: 'Accessories',
+    description: 'Structured canvas weekender with leather carry handles, shoe compartment, and a padded shoulder strap.', shortDescription: 'Durable canvas travel bag with a separate shoe compartment.', price: 4299, discountPrice: 3599, brand: 'Craftsman Guild', sku: 'NV-AC-012', stock: 14, lowStockThreshold: 5, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Color', options: ['Olive Canvas', 'Charcoal Canvas'] }], tags: ['travel', 'bag', 'weekender'], status: 'published', featured: false, newArrival: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'acc_1828875', name: 'Minimal Card Holder Wallet', categoryId: 'accessories', categoryName: 'Accessories',
+    description: 'Slim full-grain leather card holder with six card slots and a central cash sleeve.', shortDescription: 'Slim full-grain leather card holder with six practical slots.', price: 1799, discountPrice: 1399, brand: 'Craftsman Guild', sku: 'NV-AC-013', stock: 28, lowStockThreshold: 5, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Color', options: ['Cognac', 'Black'] }], tags: ['wallet', 'leather', 'minimal'], status: 'published', featured: false, newArrival: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'app_3000845', name: 'Heavyweight Essential Overshirt', categoryId: 'apparel', categoryName: 'Apparel',
+    description: 'Structured heavyweight cotton overshirt with a relaxed fit, utility pockets, and durable metal buttons.', shortDescription: 'Relaxed heavyweight cotton overshirt for layered everyday styling.', price: 3899, discountPrice: 3199, brand: 'NovaWear', sku: 'NV-AP-014', stock: 19, lowStockThreshold: 5, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Size', options: ['S', 'M', 'L', 'XL'] }, { name: 'Color', options: ['Stone', 'Deep Navy'] }], tags: ['apparel', 'overshirt', 'cotton'], status: 'published', featured: true, newArrival: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'app_5033865', name: 'Performance Polo Shirt', categoryId: 'apparel', categoryName: 'Apparel',
+    description: 'Moisture-wicking performance polo with stretch fabric, a structured collar, and quick-dry comfort.', shortDescription: 'Breathable quick-dry polo for workdays and weekends.', price: 2499, discountPrice: 1999, brand: 'NovaWear', sku: 'NV-AP-015', stock: 22, lowStockThreshold: 5, stockStatus: 'in_stock',
+    thumbnail: 'https://images.unsplash.com/photo-1625910513413-5fc45e9e4a27?auto=format&fit=crop&w=800&q=80', images: ['https://images.unsplash.com/photo-1625910513413-5fc45e9e4a27?auto=format&fit=crop&w=800&q=80'], variants: [{ name: 'Size', options: ['S', 'M', 'L', 'XL'] }, { name: 'Color', options: ['White', 'Black', 'Sky Blue'] }], tags: ['apparel', 'polo', 'activewear'], status: 'published', featured: false, newArrival: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  },
+];
+
 const INITIAL_ORDERS: Order[] = [
   {
     orderId: 'ord_sample_001',
@@ -633,7 +671,7 @@ class Database {
         const content = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(content);
         return {
-          products: parsed.products || INITIAL_PRODUCTS,
+          products: parsed.products || [...INITIAL_PRODUCTS, ...INITIAL_DEMO_PRODUCTS],
           categories: parsed.categories || INITIAL_CATEGORIES,
           orders: parsed.orders || INITIAL_ORDERS,
           reviews: parsed.reviews || INITIAL_REVIEWS,
@@ -657,7 +695,7 @@ class Database {
     }
 
     const initialData: DatabaseData = {
-      products: INITIAL_PRODUCTS,
+      products: [...INITIAL_PRODUCTS, ...INITIAL_DEMO_PRODUCTS],
       categories: INITIAL_CATEGORIES,
       orders: INITIAL_ORDERS,
       reviews: INITIAL_REVIEWS,
@@ -671,12 +709,29 @@ class Database {
   }
 
   private saveData(data: DatabaseData): void {
+    const serialized = JSON.stringify(data, null, 2);
+    const tmpFile = `${DB_FILE}.tmp`;
     try {
-      const tmpFile = `${DB_FILE}.tmp`;
-      fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
-      fs.renameSync(tmpFile, DB_FILE);
+      fs.writeFileSync(tmpFile, serialized, 'utf-8');
+      try {
+        fs.renameSync(tmpFile, DB_FILE);
+      } catch (renameError: any) {
+        if (!['EPERM', 'EEXIST', 'ENOTEMPTY'].includes(renameError?.code)) throw renameError;
+        fs.rmSync(DB_FILE, { force: true });
+        fs.renameSync(tmpFile, DB_FILE);
+      }
     } catch (err) {
-      console.error('Failed to write db.json:', err);
+      try {
+        fs.writeFileSync(DB_FILE, serialized, 'utf-8');
+      } catch (fallbackError) {
+        console.error('Failed to write db.json:', fallbackError || err);
+      }
+    } finally {
+      try {
+        if (fs.existsSync(tmpFile)) fs.rmSync(tmpFile, { force: true });
+      } catch {
+        // Ignore cleanup errors after the database write has completed.
+      }
     }
   }
 

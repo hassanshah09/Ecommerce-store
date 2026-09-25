@@ -436,28 +436,6 @@ export const OrderHistory: React.FC<OrderHistoryProps> = ({
                 </button>
               ))}
 
-              {/* Demo sample quick tags */}
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery('03214567890');
-                  performSearch('03214567890');
-                }}
-                className="px-2 py-0.5 rounded-md bg-stone-50 dark:bg-stone-800/60 text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 text-[10px]"
-              >
-                Demo: 03214567890
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery('#3943222');
-                  performSearch('#3943222');
-                }}
-                className="px-2 py-0.5 rounded-md bg-stone-50 dark:bg-stone-800/60 text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 text-[10px]"
-              >
-                Demo: #3943222
-              </button>
             </div>
           </div>
 

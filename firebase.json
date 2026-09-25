@@ -1,7 +1,11 @@
 {
   "functions": {
     "source": "functions",
-    "runtime": "nodejs20"
+    "runtime": "nodejs20",
+    "predeploy": ["npm run build:firebase"]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   },
   "emulators": {
     "functions": {
@@ -17,7 +21,7 @@
   },
   "hosting": [
     {
-      "site": "digitaizesoultion",
+      "site": "ecomerce-c938e",
       "public": "dist/customer",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -26,7 +30,7 @@
       ]
     },
     {
-      "site": "ecommercesite-admin-af89c",
+      "site": "ecomerce-c938e-admin",
       "public": "dist/admin",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [

@@ -36,6 +36,7 @@ import {
   fetchProducts,
   formatPKR,
   normalizeWhatsApp,
+  subscribeStoreConfig,
 } from './services/api';
 import {
   getDeviceWishlist,
@@ -208,6 +209,13 @@ export default function App() {
   // Keep branding and WhatsApp routing current when admin changes config elsewhere.
   useEffect(() => {
     if (isAdminRoute) return;
+
+    const unsubscribe = subscribeStoreConfig((latestConfig) => {
+      setConfig((currentConfig) => (
+        JSON.stringify(currentConfig) === JSON.stringify(latestConfig) ? currentConfig : latestConfig
+      ));
+    });
+    if (unsubscribe) return unsubscribe;
 
     const refreshConfig = async () => {
       try {
@@ -521,7 +529,14 @@ export default function App() {
           <div className="flex items-center gap-3">
             {config.branding.logo ? (
               <div className="flex items-center gap-3">
-                <img src={config.branding.logo} alt={config.store.name} className="h-10 w-auto object-contain brand-logo-image" />
+                <img
+                  src={config.branding.logo}
+                  alt={config.store.name}
+                  onError={(event) => {
+                    event.currentTarget.style.display = 'none';
+                  }}
+                  className="h-10 max-w-[140px] w-auto object-contain brand-logo-image"
+                />
                 <div className="flex flex-col leading-none">
                   <span className="font-black text-base sm:text-lg tracking-tight text-slate-950 dark:text-white">
                     {config.store.name}

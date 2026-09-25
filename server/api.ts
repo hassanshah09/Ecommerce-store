@@ -52,7 +52,7 @@ apiRouter.get('/categories', (req: Request, res: Response) => {
 apiRouter.post('/categories', (req: Request, res: Response) => {
   try {
     const { displayName, description, image } = req.body;
-    if (!displayName || typeof displayName !== 'string') {
+    if (typeof displayName !== 'string' || !displayName.trim()) {
       return res.status(400).json({ error: 'Category displayName is required' });
     }
     const actor = (req.headers['x-admin-user'] as string) || 'admin@ecommercesite.com';
@@ -95,10 +95,10 @@ apiRouter.get('/products/:id', (req: Request, res: Response) => {
 apiRouter.post('/products', (req: Request, res: Response) => {
   try {
     const { name, price } = req.body;
-    if (!name || typeof name !== 'string') {
+    if (typeof name !== 'string' || !name.trim()) {
       return res.status(400).json({ error: 'Product name is required' });
     }
-    if (price === undefined || isNaN(Number(price))) {
+    if (price === undefined || !Number.isFinite(Number(price)) || Number(price) < 0) {
       return res.status(400).json({ error: 'Valid product price is required' });
     }
     const actor = (req.headers['x-admin-user'] as string) || 'admin@ecommercesite.com';
@@ -111,6 +111,12 @@ apiRouter.post('/products', (req: Request, res: Response) => {
 
 apiRouter.put('/products/:id', (req: Request, res: Response) => {
   try {
+    if (req.body.name !== undefined && (typeof req.body.name !== 'string' || !req.body.name.trim())) {
+      return res.status(400).json({ error: 'Product name cannot be empty' });
+    }
+    if (req.body.price !== undefined && (!Number.isFinite(Number(req.body.price)) || Number(req.body.price) < 0)) {
+      return res.status(400).json({ error: 'Valid product price is required' });
+    }
     const actor = (req.headers['x-admin-user'] as string) || 'admin@ecommercesite.com';
     const updated = db.updateProduct(req.params.id, req.body, actor);
     if (!updated) {

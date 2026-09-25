@@ -8,7 +8,7 @@ interface AdminAuthGateProps {
   onExit: () => void;
 }
 
-export const ADMIN_EMAIL = 'admin@digitaize.soultion';
+export const ADMIN_EMAIL = 'admin@digitaizesolution.com';
 
 export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ onSuccess, onExit }) => {
   const [email, setEmail] = useState(ADMIN_EMAIL);
